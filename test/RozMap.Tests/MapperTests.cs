@@ -34,6 +34,22 @@ namespace RozMap.Tests
             dest.TestProperty.Should().Be(888);
             dest.SimpleProperty.Should().BeEquivalentTo(new SimpleDest { TestProperty = 777 });
         }
+
+        [Fact]
+        public void Should_Be_Able_To_Map_Object_With_Mathcing_Non_Primitive_Members()
+        {
+            var config = new MapperConfiguration();
+            var mapper = new Mapper(config);
+
+            var sourceProp = new SimpleSource { TestProperty = 777 };
+            var source = new NestedSource { TestProperty = 888, SimpleProperty = sourceProp };
+
+            var dest = mapper.Map<NestedSource, NestedDest>(source);
+
+            dest.Should().NotBeNull();
+            dest.TestProperty.Should().Be(888);
+            dest.SimpleProperty.Should().BeEquivalentTo(new SimpleDest { TestProperty = 777 });
+        }
     }
 
     public class SimpleSource
@@ -56,5 +72,17 @@ namespace RozMap.Tests
     {
         public int TestProperty { get; set; }
         public SimpleDest SimpleProperty { get; set; }
+    }
+
+    public class NestedSource
+    {
+        public int TestProperty { get; set; }
+        public SimpleSource SimpleProperty { get; set; }
+    }
+
+    public class NestedDest
+    {
+        public int TestProperty { get; set; }
+        public SimpleSource SimpleProperty { get; set; }
     }
 }

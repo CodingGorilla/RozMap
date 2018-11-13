@@ -96,7 +96,7 @@ namespace RozMap
         {
             var propertyName = destProperty.Name;
 
-            if(destProperty.IsPrimitive())
+            if(destProperty.IsPrimitive() || SourceType.GetProperty(propertyName)?.PropertyType == destProperty.PropertyType)
                 sourceWriter.WriteLine($"destInstance.{propertyName} = typedInstance.{propertyName};");
             else
             {
@@ -104,13 +104,13 @@ namespace RozMap
                 if(sourceProperty == null)
                     throw new Exception("Huh??");
 
-                var dependencyFieldName = AddRequiredMapper(sourceWriter, sourceProperty.PropertyType, destProperty.PropertyType);
+                var dependencyFieldName = AddRequiredMapper(sourceProperty.PropertyType, destProperty.PropertyType);
                 sourceWriter.WriteLine(
                     $"destInstance.{propertyName} = ({destProperty.PropertyType.FullName})this.{dependencyFieldName}.MapInstance(typedInstance.{propertyName});");
             }
         }
 
-        private string AddRequiredMapper(ISourceWriter sourceWriter, Type sourceType, Type destType)
+        private string AddRequiredMapper(Type sourceType, Type destType)
         {
             var paramName = $"{sourceType.SanitizedName()}_to_{destType.SanitizedName()}_mapper";
 
