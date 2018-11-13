@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace RozMap.Extensions
@@ -41,6 +42,11 @@ namespace RozMap.Extensions
         public static string Join(this IEnumerable<string> values, string separator)
         {
             return string.Join(separator, values);
+        }
+
+        public static bool IsPrimitive(this PropertyInfo property)
+        {
+            return property.PropertyType.IsPrimitive || property.PropertyType == typeof(string);
         }
     }
 }

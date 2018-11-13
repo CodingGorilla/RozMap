@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using RozMap.Extensions;
 
 namespace RozMap.CodeGen
@@ -43,24 +44,51 @@ namespace RozMap.CodeGen
             FinishBlock();
         }
 
+        public void BeginConstructor(string className, params (string parameterFullTypeName, string parameterName)[] parameters)
+        {
+            var line = new StringBuilder($"public {className}(");
+
+            if(parameters.Any())
+            {
+                for(var i = 0; i < parameters.Length; i++)
+                {
+                    var (parameterFullTypeName, parameterName) = parameters[i];
+                    line.Append($"{parameterFullTypeName} {parameterName}");
+                    if(i < parameters.Length - 1)
+                        _writer.Write(", ");
+                }
+            }
+
+            line.Append(")");
+
+            WriteLine(line.ToString());
+
+            StartBlock();
+        }
+
+        public void EndConstructor()
+        {
+            FinishBlock();
+        }
+
         public void BeginMethod(string methodName, Type returnType, params (Type parameterType, string parameterName)[] parameters)
         {
-            var line = $"public {returnType.FullName} {methodName}(";
+            var line = new StringBuilder($"public {returnType.FullName} {methodName}(");
 
             if(parameters.Any())
             {
                 for(var i = 0; i < parameters.Length; i++)
                 {
                     var (parameterType, parameterName) = parameters[i];
-                    line += $"{parameterType.FullName} {parameterName}";
+                    line.Append($"{parameterType.FullName} {parameterName}");
                     if(i < parameters.Length-1)
                         _writer.Write(", ");
                 }
             }
 
-            line += ")";
+            line.Append(")");
 
-            WriteLine(line);
+            WriteLine(line.ToString());
 
             StartBlock();
         }

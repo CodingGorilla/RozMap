@@ -11,12 +11,28 @@ namespace RozMap.Tests
         {
             var config = new MapperConfiguration();
             var mapper = new Mapper(config);
-            
             var source = new SimpleSource { TestProperty = 777 };
+            
             var dest = mapper.Map<SimpleSource, SimpleDest>(source);
 
             dest.Should().NotBeNull();
             dest.TestProperty.Should().Be(source.TestProperty);
+        }
+
+        [Fact]
+        public void Should_Be_Able_To_Map_More_Complex_Class()
+        {
+            var config = new MapperConfiguration();
+            var mapper = new Mapper(config);
+
+            var sourceProp = new SimpleSource { TestProperty = 777 };
+            var source = new ComplexSource { TestProperty = 888, SimpleProperty = sourceProp };
+
+            var dest = mapper.Map<ComplexSource, ComplexDest>(source);
+
+            dest.Should().NotBeNull();
+            dest.TestProperty.Should().Be(888);
+            dest.SimpleProperty.Should().BeEquivalentTo(new SimpleDest { TestProperty = 777 });
         }
     }
 
@@ -28,5 +44,17 @@ namespace RozMap.Tests
     public class SimpleDest
     {
         public int TestProperty { get; set; }
+    }
+
+    public class ComplexSource
+    {
+        public int TestProperty { get; set; }
+        public SimpleSource SimpleProperty { get; set; }
+    }
+
+    public class ComplexDest
+    {
+        public int TestProperty { get; set; }
+        public SimpleDest SimpleProperty { get; set; }
     }
 }

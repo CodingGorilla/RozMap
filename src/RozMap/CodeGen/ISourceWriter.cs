@@ -43,5 +43,7 @@ namespace RozMap.CodeGen
         // Closes all remaining blocks
         void CompleteCode();
         string GetSourceCode();
+        void BeginConstructor(string className, params (string parameterFullTypeName, string parameterName)[] parameters);
+        void EndConstructor();
     }
 }
